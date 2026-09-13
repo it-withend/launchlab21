@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Launch Lab 21 — Инкубатор</title>
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --ink: #1b1d22;
+    --muted: #6b6f78;
+    --line: #e3e1da;
+    --accent: #6d28d9;
+    --accent-soft: #efe8fd;
+    --ok: #15803d;
+    --ok-soft: #e6f4ea;
+    --warn: #b45309;
+    --warn-soft: #fdf1e1;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: inherit; }
+  header.top {
+    background: var(--ink); color: #fff; padding: 12px 24px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  header.top .brand { font-weight: 700; letter-spacing: .02em; text-decoration: none; }
+  header.top .brand span { color: #a78bfa; }
+  header.top .crumbs { color: #b9bcc4; font-size: 14px; }
+  header.top .crumbs a { color: #e5e7eb; text-decoration: none; }
+  header.top .crumbs a:hover { text-decoration: underline; }
+  .role-switch { display: flex; align-items: center; gap: 4px; background: #2b2e36; border-radius: 10px; padding: 3px; }
+  .role-switch .role-label { font-size: 12px; color: #9ca0a8; padding: 0 6px 0 8px; }
+  .role-switch button {
+    font: inherit; font-size: 14px; font-weight: 600; color: #b9bcc4;
+    background: transparent; border: 0; padding: 6px 12px; border-radius: 7px; cursor: pointer;
+  }
+  .role-switch button[aria-pressed="true"] { background: #fff; color: var(--ink); }
+  main { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 6px; }
+  h2 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .stack > * + * { margin-top: 12px; }
+  .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .spacer { flex: 1; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font: inherit; font-weight: 600; font-size: 15px;
+    padding: 10px 16px; border-radius: 9px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    text-decoration: none; white-space: nowrap;
+  }
+  .btn:hover { border-color: #c9c6bc; }
+  .btn:focus-visible, input:focus-visible, textarea:focus-visible, .pick:focus-visible { outline: 3px solid #c4b5fd; outline-offset: 1px; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { background: #5b21b6; }
+  .btn.ghost { background: transparent; }
+  .btn.small { padding: 6px 12px; font-size: 14px; }
+  .btn.danger { color: #b91c1c; }
+  .progress { height: 8px; background: #eceae4; border-radius: 99px; overflow: hidden; }
+  .progress > div { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+  .badge {
+    display: inline-block; font-size: 13px; font-weight: 600;
+    padding: 3px 10px; border-radius: 99px; white-space: nowrap;
+  }
+  .badge.done { background: var(--ok-soft); color: var(--ok); }
+  .badge.partial { background: var(--warn-soft); color: var(--warn); }
+  .badge.empty { background: #eeede8; color: var(--muted); }
+  .badge.current { background: var(--accent-soft); color: var(--accent); }
+  .project-card { display: block; text-decoration: none; transition: border-color .15s, transform .15s; }
+  .project-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .pick { width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+  .module-item { display: flex; align-items: center; gap: 16px; text-decoration: none; }
+  .module-item:hover { border-color: var(--accent); }
+  .module-num {
+    width: 40px; height: 40px; border-radius: 50%; flex: none;
+    display: grid; place-items: center; font-weight: 700;
+    background: var(--accent-soft); color: var(--accent);
+  }
+  .module-num.done { background: var(--ok); color: #fff; }
+  .module-num.current { background: var(--accent); color: #fff; }
+  .module-num.empty, .module-num.partial { background: #eeede8; color: var(--muted); }
+  .module-item.is-current { border: 2px solid var(--accent); box-shadow: 0 4px 14px rgba(109,40,217,.12); }
+  .journey {
+    list-style: none; margin: 0 0 24px; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  }
+  .journey li {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 9px; background: #eceae4;
+    color: var(--muted); font-size: 13px; font-weight: 600; line-height: 1.25;
+  }
+  .journey .j-num {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    display: grid; place-items: center; background: #fff; font-size: 12px;
+  }
+  .journey li.done { background: var(--ok-soft); color: var(--ok); }
+  .journey li.active { background: var(--accent); color: #fff; }
+  .journey li.active .j-num { color: var(--accent); }
+  .success {
+    background: var(--ok-soft); border: 1px solid #b7dfc3; color: #14532d;
+    border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px;
+  }
+  .notice {
+    background: var(--accent-soft); color: #4c1d95; border-radius: var(--radius);
+    padding: 12px 16px; margin-bottom: 16px;
+  }
+  .just-saved {
+    border-left: 4px solid var(--ok); padding-left: 16px; margin-left: -20px;
+    animation: flash 1.6s ease-out;
+  }
+  @keyframes flash { from { background: #d9f2e0; } to { background: transparent; } }
+  .form-error { color: #b91c1c; font-weight: 600; margin: 0; }
+  .steps { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .step {
+    font-size: 14px; font-weight: 600; text-decoration: none; color: var(--muted);
+    padding: 6px 12px; border-radius: 99px; background: #eceae4; border: 2px solid transparent;
+  }
+  .step.done { background: var(--ok-soft); color: var(--ok); }
+  .step.active { border-color: var(--accent); color: var(--accent); background: var(--surface); }
+  label.field { display: block; }
+  label.field .q { display: block; font-weight: 600; margin-bottom: 6px; }
+  input[type=text], textarea {
+    width: 100%; font: inherit; color: var(--ink);
+    padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; background: #fcfbf9;
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  textarea[readonly] { background: #f3f2ee; }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+    background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 9px;
+    font-weight: 600; box-shadow: 0 6px 20px rgba(0,0,0,.2); z-index: 10;
+  }
+  /* Куратор */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .stat { padding: 16px; }
+  .stat-num { font-size: 28px; font-weight: 700; line-height: 1.1; }
+  .table-wrap { padding: 0; overflow-x: auto; }
+  table.teams { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .teams th {
+    text-align: left; font-size: 13px; color: var(--muted); font-weight: 600;
+    padding: 12px 14px; border-bottom: 1px solid var(--line); white-space: nowrap;
+  }
+  .teams td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .teams tr:last-child td { border-bottom: 0; }
+  .dots { display: flex; gap: 5px; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; background: #e3e1da; }
+  .dot.done { background: var(--ok); }
+  .dot.partial { background: #f59e0b; }
+  .comments { margin-top: 14px; background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; }
+  .comments-title { font-weight: 700; font-size: 14px; color: var(--accent); }
+  .comment { background: #fff; border-radius: 8px; padding: 8px 12px; margin-top: 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .comment-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .comment-form { margin-top: 10px; flex-wrap: nowrap; }
+  .comment-form input { flex: 1; width: auto; min-width: 0; }
+  /* One-pager */
+  .onepager { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 40px; }
+  .onepager .op-head { border-bottom: 2px solid var(--ink); padding-bottom: 20px; margin-bottom: 28px; }
+  .onepager .op-label { text-transform: uppercase; letter-spacing: .08em; font-size: 12px; color: var(--accent); font-weight: 700; }
+  .onepager .op-title { font-size: 36px; margin: 4px 0 8px; line-height: 1.15; }
+  .onepager .op-desc { font-size: 18px; margin: 0 0 12px; }
+  .onepager .op-team { color: var(--muted); margin: 0; }
+  .onepager section + section { margin-top: 28px; }
+  .onepager dl { margin: 12px 0 0; }
+  .onepager dt { font-weight: 600; color: var(--muted); font-size: 14px; }
+  .onepager dd { margin: 2px 0 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .empty-section {
+    border: 2px dashed var(--line); border-radius: var(--radius);
+    padding: 20px; color: var(--muted); background: #faf9f6; margin-top: 12px;
+  }
+  .missing { color: var(--muted); font-style: italic; }
+  @media (max-width: 700px) {
+    .journey, .stats { grid-template-columns: repeat(2, 1fr); }
+    .onepager { padding: 22px; }
+    .onepager .op-title { font-size: 28px; }
+    h1 { font-size: 24px; }
+    .just-saved { margin-left: -12px; padding-left: 8px; }
+  }
+  @media print {
+    header.top, .no-print { display: none !important; }
+    body { background: #fff; }
+    main { padding: 0; max-width: none; }
+    .onepager { border: none; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#/">Launch Lab <span>21</span></a>
+  <nav class="crumbs" id="crumbs"></nav>
+  <div class="spacer"></div>
+  <div class="role-switch" role="group" aria-label="Роль">
+    <span class="role-label">Роль:</span>
+    <button type="button" data-role="participant">Участник</button>
+    <button type="button" data-role="curator">Куратор</button>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+/* =========================================================
+   Модули программы — массив объектов.
+   Чтобы добавить модуль, достаточно дописать объект сюда.
+   ========================================================= */
+const MODULES = [
+  {
+    id: 'problem',
+    title: 'Проблема и аудитория',
+    description: 'Сформулируйте, какую боль вы решаете и для кого.',
+    fields: [
+      { id: 'problem',  label: 'Какую проблему вы решаете?',
+        placeholder: 'Например: студенты тратят по 3 часа в неделю на поиск свободной аудитории для учёбы' },
+      { id: 'audience', label: 'Кто страдает от этой проблемы?',
+        placeholder: 'Например: студенты 1–4 курсов крупных вузов, которые учатся в группах' },
+      { id: 'current',  label: 'Как они справляются с этим сегодня?',
+        placeholder: 'Например: ходят по корпусам, спрашивают в чатах, сидят в кафе' },
+    ],
+  },
+  {
+    id: 'solution',
+    title: 'Решение и MVP',
+    description: 'Опишите ваш продукт и то, что уже сделано.',
+    fields: [
+      { id: 'solution', label: 'Как ваш продукт решает проблему?',
+        placeholder: 'Например: мобильное приложение показывает карту кампуса со свободными аудиториями в реальном времени' },
+      { id: 'mvp',      label: 'Что входит в MVP?',
+        placeholder: 'Например: карта одного корпуса, бронирование на 2 часа, уведомление за 10 минут до конца' },
+      { id: 'done',     label: 'Что уже сделано?',
+        placeholder: 'Например: прототип в Figma, 15 интервью со студентами, пилот в корпусе №2' },
+    ],
+  },
+  {
+    id: 'market',
+    title: 'Рынок и первые клиенты',
+    description: 'Покажите, насколько велик рынок и кто станет первыми пользователями.',
+    fields: [
+      { id: 'size',      label: 'Каков размер рынка?',
+        placeholder: 'Например: 4 млн студентов в России, из них 1,2 млн в вузах с несколькими корпусами' },
+      { id: 'first',     label: 'Кто ваши первые клиенты?',
+        placeholder: 'Например: студсовет НИУ ВШЭ, 300 студентов из пилотной группы' },
+      { id: 'model',     label: 'Как вы будете зарабатывать?',
+        placeholder: 'Например: подписка для вузов 50 000 ₽ в год за корпус' },
+    ],
+  },
+];
+
+const PROFILE_FIELDS = [
+  { id: 'name',        label: 'Название проекта', placeholder: 'Например: RoomFinder', type: 'text' },
+  { id: 'team',        label: 'Состав команды',   placeholder: 'Например: Анна — продукт, Илья — разработка', type: 'text' },
+  { id: 'description', label: 'Краткое описание', placeholder: 'Одно-два предложения: что это за продукт', type: 'textarea' },
+];
+
+/* =========================================================
+   Хранилище (localStorage)
+   ========================================================= */
+const STORAGE_KEY = 'll21.state.v2';
+const SESSION_KEY = 'll21.session.v1';
+
+function seedState() {
+  return {
+    projects: [
+      {
+        id: 'demo-filled',
+        name: 'RoomFinder',
+        team: 'Анна Смирнова — продукт, Илья Орлов — разработка, Мария Ким — дизайн',
+        description: 'Сервис, который в реальном времени показывает свободные аудитории в кампусе.',
+        answers: {
+          problem: {
+            problem: 'Студенты тратят до 3 часов в неделю на поиск свободного места для групповой учёбы.',
+            audience: 'Студенты 1–4 курсов крупных вузов, которые готовят проекты в командах.',
+            current: 'Ходят по корпусам наугад, спрашивают в общих чатах или уходят заниматься в кафе.',
+          },
+          solution: {
+            solution: 'Карта кампуса с датчиками занятости показывает, какие аудитории свободны прямо сейчас.',
+            mvp: 'Карта одного корпуса, бронирование аудитории на 2 часа, напоминание за 10 минут до конца брони.',
+            done: 'Провели 20 интервью со студентами, собрали кликабельный прототип, договорились о пилоте в корпусе №2.',
+          },
+          market: {
+            size: '4 млн студентов в России, из них около 1,2 млн учатся в вузах с несколькими корпусами.',
+            first: 'Студсовет пилотного вуза и 300 студентов из первой тестовой группы.',
+            model: 'Годовая подписка для вуза — 50 000 ₽ за корпус.',
+          },
+        },
+        comments: {
+          problem: [
+            { text: 'Сильная формулировка боли. Добавьте цифру из интервью: сколько человек подтвердили проблему?', at: Date.now() },
+          ],
+        },
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'demo-empty',
+        name: 'Новый проект',
+        team: '',
+        description: '',
+        answers: {},
+        comments: {},
+        updatedAt: Date.now(),
+      },
+    ],
+  };
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.projects)) {
+        parsed.projects.forEach(p => { p.answers = p.answers || {}; p.comments = p.comments || {}; });
+        return parsed;
+      }
+    }
+  } catch (e) { /* повреждённые данные — начинаем с демо */ }
+  const s = seedState();
+  saveState(s);
+  return s;
+}
+
+function saveState(s) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+  catch (e) { alert('Не удалось сохранить данные в localStorage'); }
+}
+
+// Сессия без авторизации: выбранная роль и «свой» проект участника
+function loadSession() {
+  const def = { role: 'participant', myProjectId: null };
+  try { return Object.assign(def, JSON.parse(localStorage.getItem(SESSION_KEY) || '{}')); }
+  catch (e) { return def; }
+}
+
+function saveSession() {
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch (e) { /* не критично */ }
+}
+
+let state = loadState();
+let session = loadSession();
+
+const isCurator  = () => session.role === 'curator';
+const getProject = id => state.projects.find(p => p.id === id);
+const getModule  = id => MODULES.find(m => m.id === id);
+
+/* =========================================================
+   Прогресс и комментарии
+   ========================================================= */
+function moduleStatus(project, module) {
+  const a = project.answers[module.id] || {};
+  const filled = module.fields.filter(f => (a[f.id] || '').trim()).length;
+  if (filled === 0) return 'empty';
+  return filled === module.fields.length ? 'done' : 'partial';
+}
+
+function projectProgress(project) {
+  const done = MODULES.filter(m => moduleStatus(project, m) === 'done').length;
+  return { done, total: MODULES.length, pct: Math.round(done / MODULES.length * 100) };
+}
+
+// Текущий модуль — первый по порядку, который ещё не заполнен полностью
+function currentModule(project) {
+  return MODULES.find(m => moduleStatus(project, m) !== 'done') || null;
+}
+
+function remainingModules(project) {
+  return MODULES.filter(m => moduleStatus(project, m) !== 'done');
+}
+
+const commentsFor  = (project, moduleId) => project.comments[moduleId] || [];
+const commentCount = project => Object.values(project.comments).reduce((s, list) => s + list.length, 0);
+
+const STATUS_LABEL = { done: '✓ Пройден', current: '● Текущий', partial: 'Частично', empty: 'Впереди' };
+
+/* =========================================================
+   Утилиты
+   ========================================================= */
+function esc(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function fmtDate(ts) {
+  return new Date(ts).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
+function progressBar(pr) {
+  return `<div class="progress" role="progressbar" aria-valuenow="${pr.pct}" aria-valuemin="0" aria-valuemax="100">
+    <div style="width:${pr.pct}%"></div></div>`;
+}
+
+// Полоса обязательного сценария: Проект → Модуль → Сохранение → One-pager (только для участника)
+const JOURNEY = ['Создать или открыть проект', 'Пройти модуль', 'Сохранить ответ', 'Увидеть в one-pager'];
+function journey(active) {
+  if (isCurator()) return '';
+  return `<ol class="journey no-print" aria-label="Сценарий">
+    ${JOURNEY.map((label, i) => {
+      const n = i + 1;
+      const cls = n < active ? 'done' : n === active ? 'active' : '';
+      return `<li class="${cls}" ${n === active ? 'aria-current="step"' : ''}>
+        <span class="j-num">${n < active ? '✓' : n}</span><span>${label}</span></li>`;
+    }).join('')}
+  </ol>`;
+}
+
+function setCrumbs(items) {
+  document.getElementById('crumbs').innerHTML = items
+    .map(i => i.href ? `<a href="${i.href}">${esc(i.label)}</a>` : esc(i.label))
+    .join(' &nbsp;/&nbsp; ');
+}
+
+const homeCrumb = () => isCurator()
+  ? { label: 'Все команды', href: '#/curator' }
+  : { label: 'Мой проект', href: '#/' };
+
+function projectCrumbs(project, ...rest) {
+  return [homeCrumb(), { label: project.name || 'Без названия', href: `#/p/${project.id}` }, ...rest];
+}
+
+function commentsBlock(project, module) {
+  const list = commentsFor(project, module.id);
+  if (!list.length && !isCurator()) return '';
+  return `<div class="comments no-print">
+    <div class="comments-title">💬 Комментарии куратора${list.length ? ` (${list.length})` : ''}</div>
+    ${list.map(c => `<div class="comment"><div>${esc(c.text)}</div><div class="comment-meta">Куратор · ${fmtDate(c.at)}</div></div>`).join('')}
+    ${isCurator() ? `<form class="comment-form row" data-module="${module.id}">
+        <input type="text" name="text" placeholder="Комментарий команде к модулю «${esc(module.title)}»" aria-label="Комментарий">
+        <button class="btn primary small" type="submit">Отправить</button>
+      </form>` : ''}
+  </div>`;
+}
+
+function bindCommentForms(project, rerender) {
+  app.querySelectorAll('.comment-form').forEach(form => {
+    form.onsubmit = e => {
+      e.preventDefault();
+      const text = form.elements.text.value.trim();
+      if (!text) return form.elements.text.focus();
+      const id = form.dataset.module;
+      project.comments[id] = [...commentsFor(project, id), { text, at: Date.now() }];
+      saveState(state);
+      toast('Комментарий отправлен команде');
+      rerender();
+    };
+  });
+}
+
+/* =========================================================
+   Экраны
+   ========================================================= */
+const app = document.getElementById('app');
+
+// 0. Участник: создать или открыть проект своей команды
+function viewChooseProject() {
+  setCrumbs([]);
+  app.innerHTML = `
+    ${journey(1)}
+    <h1>Добро пожаловать в Launch Lab 21</h1>
+    <p class="sub">Создайте проект своей команды или откройте существующий. Участник видит только свой проект.</p>
+    <div class="card" style="margin-bottom:24px">
+      <div class="row">
+        <div style="flex:1;min-width:220px">
+          <h2>Новая команда</h2>
+          <p class="sub" style="margin:0">Заполните профиль проекта и начните с модуля 1.</p>
+        </div>
+        <button class="btn primary" id="new-project">+ Создать проект</button>
+      </div>
+    </div>
+    <h2 style="margin-bottom:12px">Открыть проект своей команды</h2>
+    <div class="stack">
+      ${state.projects.map(p => `
+        <button type="button" class="card project-card pick" data-id="${p.id}">
+          <div class="row">
+            <h2>${esc(p.name || 'Без названия')}</h2>
+            <div class="spacer"></div>
+            <span class="btn small">Открыть →</span>
+          </div>
+          <p class="sub" style="margin:4px 0 0">${p.team ? esc(p.team) : '<span class="missing">Состав команды не указан</span>'}</p>
+        </button>`).join('')}
+    </div>
+    <p class="no-print" style="margin-top:32px">
+      <button class="btn ghost danger" id="reset">Сбросить демо-данные</button>
+    </p>`;
+
+  document.getElementById('new-project').onclick = () => {
+    const id = 'p-' + Date.now().toString(36);
+    state.projects.push({ id, name: '', team: '', description: '', answers: {}, comments: {}, updatedAt: Date.now() });
+    saveState(state);
+    session.myProjectId = id;
+    saveSession();
+    location.hash = `#/p/${id}/profile`;
+  };
+  app.querySelectorAll('.pick').forEach(btn => {
+    btn.onclick = () => {
+      session.myProjectId = btn.dataset.id;
+      saveSession();
+      location.hash = `#/p/${btn.dataset.id}`;
+    };
+  });
+  document.getElementById('reset').onclick = resetDemo;
+}
+
+function resetDemo() {
+  if (!confirm('Удалить все изменения и вернуть демо-проекты?')) return;
+  state = seedState();
+  saveState(state);
+  session.myProjectId = null;
+  saveSession();
+  toast('Демо-данные восстановлены');
+  render();
+}
+
+// Куратор: все команды и их прогресс
+function viewCurator() {
+  setCrumbs([{ label: 'Все команды' }]);
+  const projects = state.projects;
+  const finished = projects.filter(p => !currentModule(p)).length;
+  const avg = projects.length
+    ? Math.round(projects.reduce((s, p) => s + projectProgress(p).pct, 0) / projects.length) : 0;
+  const comments = projects.reduce((s, p) => s + commentCount(p), 0);
+
+  app.innerHTML = `
+    <div class="row" style="margin-bottom:6px">
+      <h1>Режим куратора</h1>
+      <span class="badge current">Куратор</span>
+    </div>
+    <p class="sub">Все команды инкубатора и их прогресс. Откройте one-pager команды, чтобы прочитать ответы и оставить комментарий к модулю.</p>
+    <div class="stats">
+      <div class="card stat"><div class="stat-num">${projects.length}</div><div class="sub" style="margin:0">команд</div></div>
+      <div class="card stat"><div class="stat-num">${avg}%</div><div class="sub" style="margin:0">средний прогресс</div></div>
+      <div class="card stat"><div class="stat-num">${finished}</div><div class="sub" style="margin:0">прошли программу</div></div>
+      <div class="card stat"><div class="stat-num">${comments}</div><div class="sub" style="margin:0">комментариев</div></div>
+    </div>
+    <div class="card table-wrap">
+      <table class="teams">
+        <thead><tr>
+          <th>Команда</th><th>Прогресс</th><th>Модули</th><th>Текущий модуль</th><th>Обновлено</th><th></th>
+        </tr></thead>
+        <tbody>
+          ${projects.map(p => {
+            const pr = projectProgress(p);
+            const cur = currentModule(p);
+            const cc = commentCount(p);
+            return `<tr data-id="${p.id}">
+              <td><strong>${esc(p.name || 'Без названия')}</strong>
+                <div class="sub" style="margin:0;font-size:13px">${p.team ? esc(p.team) : '<span class="missing">состав не указан</span>'}</div></td>
+              <td style="min-width:130px">${progressBar(pr)}<div style="font-size:13px;margin-top:4px">${pr.done} из ${pr.total} · ${pr.pct}%</div></td>
+              <td><div class="dots">${MODULES.map(m => {
+                const st = moduleStatus(p, m);
+                return `<span class="dot ${st}" title="${esc(m.title)}: ${STATUS_LABEL[st]}"></span>`;
+              }).join('')}</div></td>
+              <td>${cur ? esc(cur.title) : '<span class="badge done">Программа пройдена</span>'}</td>
+              <td style="font-size:13px;white-space:nowrap">${fmtDate(p.updatedAt)}</td>
+              <td style="white-space:nowrap">
+                <a class="btn primary small" href="#/p/${p.id}/onepager">Ответы и one-pager</a>
+                ${cc ? `<span class="badge current" title="Комментариев">💬 ${cc}</span>` : ''}
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// Нет доступа: участник пытается открыть чужой проект
+function viewNoAccess() {
+  setCrumbs([homeCrumb()]);
+  const mine = getProject(session.myProjectId);
+  app.innerHTML = `<div class="card">
+    <h2>Нет доступа к этому проекту</h2>
+    <p class="sub">Участник видит только проект своей команды. Чтобы посмотреть все команды, переключите роль на «Куратор».</p>
+    ${mine ? `<a class="btn primary" href="#/p/${mine.id}">К моему проекту</a>` : '<a class="btn primary" href="#/">Выбрать свой проект</a>'}
+  </div>`;
+}
+
+// 1. Список модулей проекта (с прогрессом)
+function viewProject(project) {
+  const pr = projectProgress(project);
+  const nextModule = currentModule(project);
+  const remaining = remainingModules(project);
+  setCrumbs([homeCrumb(), { label: project.name || 'Без названия' }]);
+
+  app.innerHTML = `
+    ${journey(2)}
+    <div class="row" style="margin-bottom:8px">
+      <h1>${esc(project.name || 'Без названия')}</h1>
+      <div class="spacer"></div>
+      ${isCurator()
+        ? `<a class="btn" href="#/curator">← Все команды</a>`
+        : `<button class="btn ghost" id="switch-team">Сменить команду</button>
+           <a class="btn" href="#/p/${project.id}/profile">Профиль</a>`}
+      <a class="btn primary" href="#/p/${project.id}/onepager">Открыть one-pager →</a>
+    </div>
+    <p class="sub">${project.team ? 'Команда: ' + esc(project.team) : '<span class="missing">Состав команды не указан</span>'}</p>
+
+    <div class="card" style="margin-bottom:24px">
+      <div class="row" style="margin-bottom:10px">
+        <strong>Прогресс программы</strong>
+        <div class="spacer"></div>
+        <span>${pr.done} из ${pr.total} модулей · ${pr.pct}%</span>
+      </div>
+      ${progressBar(pr)}
+      <p class="sub" style="margin:10px 0 0" id="remaining">
+        ${nextModule
+          ? `Текущий модуль: <strong>${esc(nextModule.title)}</strong><br>
+             Осталось заполнить (${remaining.length}): ${remaining.map(m => esc(m.title)).join(', ')}`
+          : 'Все модули заполнены — one-pager готов 🎉'}
+      </p>
+      ${nextModule && !isCurator() ? `<a class="btn primary" style="margin-top:14px" href="#/p/${project.id}/m/${nextModule.id}">Продолжить: ${esc(nextModule.title)} →</a>` : ''}
+    </div>
+
+    <h2 style="margin-bottom:12px">Модули программы</h2>
+    <div class="stack">
+      ${MODULES.map((m, i) => {
+        const st = moduleStatus(project, m);
+        const view = st === 'done' ? 'done' : m === nextModule ? 'current' : st;
+        const hint = view === 'current' && st === 'partial' ? ' · начат' : '';
+        const cc = commentsFor(project, m.id).length;
+        return `<a class="card module-item ${view === 'current' ? 'is-current' : ''}" href="#/p/${project.id}/m/${m.id}" data-status="${view}">
+          <div class="module-num ${view}">${st === 'done' ? '✓' : i + 1}</div>
+          <div style="flex:1">
+            <div style="font-weight:600">${esc(m.title)}</div>
+            <div class="sub" style="margin:0;font-size:14px">${esc(m.description)}</div>
+          </div>
+          ${cc ? `<span class="badge current" title="Комментарии куратора">💬 ${cc}</span>` : ''}
+          <span class="badge ${view}">${STATUS_LABEL[view]}${hint}</span>
+        </a>`;
+      }).join('')}
+    </div>`;
+
+  const sw = document.getElementById('switch-team');
+  if (sw) sw.onclick = () => {
+    session.myProjectId = null;
+    saveSession();
+    location.hash = '#/';
+  };
+}
+
+// 2. Форма модуля (для куратора — только просмотр)
+function viewModule(project, module) {
+  const answers = project.answers[module.id] || {};
+  const index = MODULES.indexOf(module);
+  const readOnly = isCurator();
+  setCrumbs(projectCrumbs(project, { label: module.title }));
+
+  app.innerHTML = `
+    ${journey(2)}
+    ${readOnly ? '<div class="notice">Режим куратора: ответы доступны только для просмотра. Комментарий можно оставить внизу.</div>' : ''}
+    <div class="steps no-print">
+      ${MODULES.map((m, i) => {
+        const st = moduleStatus(project, m);
+        return `<a class="step ${m === module ? 'active' : ''} ${st === 'done' ? 'done' : ''}" href="#/p/${project.id}/m/${m.id}">
+          ${st === 'done' ? '✓' : i + 1}. ${esc(m.title)}</a>`;
+      }).join('')}
+    </div>
+    <p class="sub" style="margin:0">Модуль ${index + 1} из ${MODULES.length}</p>
+    <h1>${esc(module.title)}</h1>
+    <p class="sub">${esc(module.description)}</p>
+    <form class="card stack" id="module-form">
+      ${module.fields.map(f => `
+        <label class="field">
+          <span class="q">${esc(f.label)}</span>
+          <textarea name="${f.id}" placeholder="${esc(f.placeholder)}" ${readOnly ? 'readonly' : ''}>${esc(answers[f.id] || '')}</textarea>
+        </label>`).join('')}
+      <div class="row">
+        ${readOnly
+          ? `<a class="btn primary" href="#/p/${project.id}/onepager">Открыть one-pager →</a>`
+          : `<button type="submit" class="btn primary" id="save-answer">Сохранить ответ и открыть one-pager →</button>`}
+        <div class="spacer"></div>
+        <a class="btn ghost" href="#/p/${project.id}">${readOnly ? 'К модулям' : 'Отмена'}</a>
+      </div>
+      <p class="form-error" id="form-error" hidden>Заполните хотя бы одно поле, чтобы сохранить ответ.</p>
+    </form>
+    ${commentsBlock(project, module)}`;
+
+  bindCommentForms(project, () => viewModule(project, module));
+  if (readOnly) return;
+
+  const form = document.getElementById('module-form');
+  const errorEl = document.getElementById('form-error');
+  let dirty = false;
+  isDirty = () => dirty;
+
+  // Шаг 2 → 3: как только начали вводить, подсвечиваем «Сохранить ответ»
+  form.addEventListener('input', () => {
+    if (!dirty) document.querySelector('.journey').outerHTML = journey(3);
+    dirty = true;
+    errorEl.hidden = true;
+  });
+  form.onsubmit = e => {
+    e.preventDefault();
+    const data = {};
+    module.fields.forEach(f => { data[f.id] = form.elements[f.id].value; });
+    if (!Object.values(data).some(v => v.trim())) {
+      errorEl.hidden = false;
+      return;
+    }
+    project.answers[module.id] = data;
+    project.updatedAt = Date.now();
+    saveState(state);
+    dirty = false;
+    toast('Ответ сохранён');
+    location.hash = `#/p/${project.id}/onepager/${module.id}`;
+  };
+}
+
+// Профиль проекта
+function viewProfile(project) {
+  setCrumbs(projectCrumbs(project, { label: 'Профиль' }));
+  const isNew = !Object.keys(project.answers).length;
+  app.innerHTML = `
+    ${journey(1)}
+    <h1>Профиль проекта</h1>
+    <p class="sub">Эти данные попадут в шапку one-pager.</p>
+    <form class="card stack" id="profile-form">
+      ${PROFILE_FIELDS.map(f => `
+        <label class="field">
+          <span class="q">${esc(f.label)}</span>
+          ${f.type === 'textarea'
+            ? `<textarea name="${f.id}" placeholder="${esc(f.placeholder)}">${esc(project[f.id])}</textarea>`
+            : `<input type="text" name="${f.id}" placeholder="${esc(f.placeholder)}" value="${esc(project[f.id])}">`}
+        </label>`).join('')}
+      <div class="row">
+        <button type="submit" class="btn primary">${isNew ? 'Сохранить и перейти к модулю 1 →' : 'Сохранить'}</button>
+        <div class="spacer"></div>
+        <a class="btn ghost" href="#/p/${project.id}">Отмена</a>
+      </div>
+    </form>`;
+
+  const form = document.getElementById('profile-form');
+  let dirty = false;
+  isDirty = () => dirty;
+  form.addEventListener('input', () => { dirty = true; });
+  form.onsubmit = e => {
+    e.preventDefault();
+    PROFILE_FIELDS.forEach(f => { project[f.id] = form.elements[f.id].value.trim(); });
+    project.updatedAt = Date.now();
+    saveState(state);
+    dirty = false;
+    toast('Профиль сохранён');
+    location.hash = isNew ? `#/p/${project.id}/m/${MODULES[0].id}` : `#/p/${project.id}`;
+  };
+}
+
+// 3. One-pager — собирается автоматически из сохранённых ответов
+function viewOnePager(project, savedId) {
+  const pr = projectProgress(project);
+  const saved = !isCurator() && savedId ? getModule(savedId) : null;
+  const nextModule = currentModule(project);
+  setCrumbs(projectCrumbs(project, { label: 'One-pager' }));
+
+  const sections = MODULES.map(m => {
+    const st = moduleStatus(project, m);
+    const a = project.answers[m.id] || {};
+    if (st === 'empty') {
+      return `<section id="section-${m.id}">
+        <h2>${esc(m.title)}</h2>
+        <div class="empty-section">
+          <strong>Пустой раздел.</strong> Модуль «${esc(m.title)}» ещё не заполнен.
+          ${isCurator() ? '' : `<span class="no-print"><br><a href="#/p/${project.id}/m/${m.id}">Заполнить модуль →</a></span>`}
+        </div>
+        ${commentsBlock(project, m)}
+      </section>`;
+    }
+    return `<section id="section-${m.id}" class="${saved === m ? 'just-saved' : ''}">
+      <div class="row">
+        <h2>${esc(m.title)}</h2>
+        ${saved === m ? '<span class="badge done no-print">Только что сохранено</span>' : ''}
+        ${st === 'partial' ? '<span class="badge partial">Заполнен частично</span>' : ''}
+      </div>
+      <dl>
+        ${m.fields.map(f => `
+          <dt>${esc(f.label)}</dt>
+          <dd>${(a[f.id] || '').trim() ? esc(a[f.id].trim()) : '<span class="missing">Нет ответа</span>'}</dd>`).join('')}
+      </dl>
+      ${commentsBlock(project, m)}
+    </section>`;
+  }).join('');
+
+  app.innerHTML = `
+    ${journey(saved ? 5 : 4)}
+    ${saved ? `<div class="success no-print" id="saved-banner">
+      <strong>✓ Ответ сохранён.</strong> Модуль «${esc(saved.title)}» уже добавлен в one-pager ниже.
+      <div class="row" style="margin-top:12px">
+        ${!nextModule
+          ? '<span><strong>Все модули пройдены 🎉</strong></span>'
+          : nextModule === saved
+            ? `<a class="btn primary" href="#/p/${project.id}/m/${saved.id}">Дозаполнить модуль «${esc(saved.title)}» →</a>`
+            : `<a class="btn primary" href="#/p/${project.id}/m/${nextModule.id}">Следующий модуль: ${esc(nextModule.title)} →</a>`}
+        ${nextModule !== saved ? `<a class="btn" href="#/p/${project.id}/m/${saved.id}">Изменить ответ</a>` : ''}
+      </div>
+    </div>` : ''}
+    ${isCurator() ? '<div class="notice no-print">Режим куратора: читайте ответы команды и оставляйте комментарии под каждым модулем. Команда увидит их у себя.</div>' : ''}
+    <div class="row no-print" style="margin-bottom:16px">
+      ${isCurator()
+        ? '<a class="btn ghost" href="#/curator">← Все команды</a>'
+        : `<a class="btn ghost" href="#/p/${project.id}">← К модулям</a>`}
+      <div class="spacer"></div>
+      <span class="sub" style="margin:0">Готовность: ${pr.done} из ${pr.total}</span>
+      <button class="btn" onclick="window.print()">Печать / PDF</button>
+    </div>
+    <article class="onepager">
+      <div class="op-head">
+        <div class="op-label">One-pager · Launch Lab 21</div>
+        <div class="op-title">${project.name ? esc(project.name) : '<span class="missing">Название не указано</span>'}</div>
+        <p class="op-desc">${project.description ? esc(project.description) : '<span class="missing">Описание не заполнено</span>'}</p>
+        <p class="op-team"><strong>Команда:</strong> ${project.team ? esc(project.team) : '<span class="missing">не указана</span>'}</p>
+      </div>
+      ${sections}
+    </article>`;
+
+  bindCommentForms(project, () => viewOnePager(project));
+
+  if (saved) {
+    const el = document.getElementById('section-' + saved.id);
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 350);
+  }
+}
+
+function viewNotFound() {
+  setCrumbs([homeCrumb()]);
+  app.innerHTML = `<div class="card"><h2>Страница не найдена</h2>
+    <p class="sub">Проект или модуль не существует.</p><a class="btn primary" href="#/">На главную</a></div>`;
+}
+
+/* =========================================================
+   Роутер (hash) и права доступа
+   ========================================================= */
+let isDirty = () => false;   // есть ли несохранённые изменения на текущем экране
+let currentHash = location.hash;
+
+function render() {
+  const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  isDirty = () => false;
+  currentHash = location.hash;
+  window.scrollTo(0, 0);
+  document.querySelectorAll('.role-switch button').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.role === session.role));
+  });
+
+  if (isCurator()) {
+    if (parts.length === 0 || parts[0] === 'curator') return viewCurator();
+  } else {
+    if (parts[0] === 'curator') return go('#/');
+    if (parts.length === 0) {
+      const mine = getProject(session.myProjectId);
+      return mine ? go(`#/p/${mine.id}`) : viewChooseProject();
+    }
+  }
+  if (parts[0] !== 'p') return viewNotFound();
+
+  const project = getProject(parts[1]);
+  if (!project) return viewNotFound();
+  if (!isCurator() && project.id !== session.myProjectId) return viewNoAccess();
+
+  if (parts.length === 2) return viewProject(project);
+  if (parts[2] === 'profile') return isCurator() ? viewProject(project) : viewProfile(project);
+  if (parts[2] === 'onepager') return viewOnePager(project, parts[3]);
+  if (parts[2] === 'm') {
+    const module = getModule(parts[3]);
+    return module ? viewModule(project, module) : viewNotFound();
+  }
+  viewNotFound();
+}
+
+function go(hash) {
+  if (location.hash === hash) render();
+  else location.hash = hash;
+}
+
+window.addEventListener('hashchange', () => {
+  if (isDirty() && !confirm('Есть несохранённые изменения. Уйти без сохранения?')) {
+    history.replaceState(null, '', currentHash || location.pathname);
+    return;
+  }
+  render();
+});
+
+window.addEventListener('beforeunload', e => {
+  if (isDirty()) { e.preventDefault(); e.returnValue = ''; }
+});
+
+document.querySelectorAll('.role-switch button').forEach(b => {
+  b.onclick = () => {
+    if (b.dataset.role === session.role) return;
+    if (isDirty() && !confirm('Есть несохранённые изменения. Уйти без сохранения?')) return;
+    isDirty = () => false;
+    session.role = b.dataset.role;
+    saveSession();
+    go(isCurator() ? '#/curator' : '#/');
+  };
+});
+
+// Синхронизация между вкладками (например, куратор и участник в соседних окнах)
+window.addEventListener('storage', e => {
+  if (e.key !== STORAGE_KEY || isDirty()) return;
+  state = loadState();
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
