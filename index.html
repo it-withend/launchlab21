@@ -6,196 +6,331 @@
 <title>Launch Lab 21 — Инкубатор</title>
 <style>
   :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --ink: #1b1d22;
-    --muted: #6b6f78;
-    --line: #e3e1da;
-    --accent: #6d28d9;
-    --accent-soft: #efe8fd;
-    --ok: #15803d;
-    --ok-soft: #e6f4ea;
-    --warn: #b45309;
-    --warn-soft: #fdf1e1;
-    --radius: 12px;
+    --bg: #141925;
+    --surface: #1e2433;
+    --surface-2: #262d3f;
+    --line: #2f3749;
+    --ink: #eef0f5;
+    --muted: #9aa3b5;
+    --violet: #8b3cf7;
+    --violet-soft: rgba(139, 60, 247, .16);
+    --green: #3ee89a;
+    --green-soft: rgba(62, 232, 154, .13);
+    --amber: #f5b544;
+    --amber-soft: rgba(245, 181, 68, .14);
+    --red: #ff6b6b;
+    --brand: linear-gradient(90deg, #8b3cf7, #3ee89a);
+    --radius: 14px;
   }
   * { box-sizing: border-box; }
   body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    margin: 0; color: var(--ink);
+    font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background:
+      radial-gradient(1100px 560px at 8% -12%, rgba(139, 60, 247, .20), transparent 60%),
+      radial-gradient(900px 480px at 108% 4%, rgba(62, 232, 154, .10), transparent 60%),
+      var(--bg);
+    background-attachment: fixed;
+    min-height: 100vh;
   }
   a { color: inherit; }
-  header.top {
-    background: var(--ink); color: #fff; padding: 12px 24px;
-    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  }
-  header.top .brand { font-weight: 700; letter-spacing: .02em; text-decoration: none; }
-  header.top .brand span { color: #a78bfa; }
-  header.top .crumbs { color: #b9bcc4; font-size: 14px; }
-  header.top .crumbs a { color: #e5e7eb; text-decoration: none; }
-  header.top .crumbs a:hover { text-decoration: underline; }
-  .role-switch { display: flex; align-items: center; gap: 4px; background: #2b2e36; border-radius: 10px; padding: 3px; }
-  .role-switch .role-label { font-size: 12px; color: #9ca0a8; padding: 0 6px 0 8px; }
-  .role-switch button {
-    font: inherit; font-size: 14px; font-weight: 600; color: #b9bcc4;
-    background: transparent; border: 0; padding: 6px 12px; border-radius: 7px; cursor: pointer;
-  }
-  .role-switch button[aria-pressed="true"] { background: #fff; color: var(--ink); }
-  main { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
-  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 6px; }
-  h2 { font-size: 20px; margin: 0 0 4px; }
+  h1 { font-size: 34px; line-height: 1.15; margin: 0 0 6px; letter-spacing: -.01em; }
+  h2 { font-size: 21px; line-height: 1.25; margin: 0 0 4px; }
+  h3 { font-size: 19px; margin: 0; }
   .sub { color: var(--muted); margin: 0 0 24px; }
-  .card {
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 20px;
+  .eyebrow {
+    display: inline-block; font-size: 14px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: #b89cff; margin-bottom: 6px;
   }
-  .stack > * + * { margin-top: 12px; }
+  .grad { background: var(--brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .missing { color: var(--muted); font-style: italic; }
   .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .spacer { flex: 1; }
+  .stack > * + * { margin-top: 12px; }
+
+  /* ---------- Шапка ---------- */
+  header.top {
+    background: rgba(12, 15, 23, .82); border-bottom: 1px solid var(--line);
+    padding: 12px 28px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  }
+  header.top .brand { font-weight: 800; font-size: 19px; letter-spacing: .01em; text-decoration: none; }
+  header.top .crumbs { color: var(--muted); font-size: 15px; }
+  header.top .crumbs a { color: var(--ink); text-decoration: none; }
+  header.top .crumbs a:hover { text-decoration: underline; }
+  .role-switch { display: flex; align-items: center; gap: 4px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 4px; }
+  .role-switch .role-label { font-size: 14px; color: var(--muted); padding: 0 6px 0 8px; }
+  .role-switch button {
+    font: inherit; font-size: 15px; font-weight: 700; color: var(--muted);
+    background: transparent; border: 0; padding: 7px 14px; border-radius: 9px; cursor: pointer;
+  }
+  .role-switch button:hover { color: var(--ink); }
+  .role-switch button[aria-pressed="true"] { background: var(--brand); color: #0d1020; }
+
+  main { max-width: 1220px; margin: 0 auto; padding: 32px 28px 72px; }
+  #app > * { animation: rise .24s ease-out both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- Базовые компоненты ---------- */
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 22px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+  }
   .btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    font: inherit; font-weight: 600; font-size: 15px;
-    padding: 10px 16px; border-radius: 9px; cursor: pointer;
-    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
-    text-decoration: none; white-space: nowrap;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font: inherit; font-weight: 700; font-size: 16px;
+    padding: 11px 18px; border-radius: 10px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
+    text-decoration: none; white-space: nowrap; transition: border-color .15s, filter .15s, transform .1s;
   }
-  .btn:hover { border-color: #c9c6bc; }
-  .btn:focus-visible, input:focus-visible, textarea:focus-visible, .pick:focus-visible { outline: 3px solid #c4b5fd; outline-offset: 1px; }
-  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .btn.primary:hover { background: #5b21b6; }
+  .btn:hover { border-color: #4a5470; }
+  .btn:active { transform: translateY(1px); }
+  .btn.primary { background: var(--brand); color: #0d1020; border-color: transparent; box-shadow: 0 6px 20px rgba(139, 60, 247, .28); }
+  .btn.primary:hover { filter: brightness(1.08); }
   .btn.ghost { background: transparent; }
-  .btn.small { padding: 6px 12px; font-size: 14px; }
-  .btn.danger { color: #b91c1c; }
-  .progress { height: 8px; background: #eceae4; border-radius: 99px; overflow: hidden; }
-  .progress > div { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+  .btn.small { padding: 7px 13px; font-size: 15px; }
+  .btn.block { width: 100%; }
+  .btn.danger { color: var(--red); }
+  :focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
   .badge {
-    display: inline-block; font-size: 13px; font-weight: 600;
-    padding: 3px 10px; border-radius: 99px; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 700;
+    padding: 3px 11px; border-radius: 99px; white-space: nowrap;
   }
-  .badge.done { background: var(--ok-soft); color: var(--ok); }
-  .badge.partial { background: var(--warn-soft); color: var(--warn); }
-  .badge.empty { background: #eeede8; color: var(--muted); }
-  .badge.current { background: var(--accent-soft); color: var(--accent); }
-  .project-card { display: block; text-decoration: none; transition: border-color .15s, transform .15s; }
-  .project-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-  .pick { width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; }
-  .module-item { display: flex; align-items: center; gap: 16px; text-decoration: none; }
-  .module-item:hover { border-color: var(--accent); }
-  .module-num {
-    width: 40px; height: 40px; border-radius: 50%; flex: none;
-    display: grid; place-items: center; font-weight: 700;
-    background: var(--accent-soft); color: var(--accent);
+  .badge.done { background: var(--green-soft); color: var(--green); }
+  .badge.partial { background: var(--amber-soft); color: var(--amber); }
+  .badge.empty { background: var(--surface-2); color: var(--muted); }
+  .badge.current { background: var(--violet-soft); color: #c4a5ff; }
+  .progress { height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+  .progress > div { height: 100%; background: var(--brand); border-radius: 99px; transition: width .35s ease; }
+  .notice { background: var(--violet-soft); border: 1px solid rgba(139, 60, 247, .35); color: #dccbff; border-radius: var(--radius); padding: 13px 18px; margin-bottom: 18px; }
+  .success { background: var(--green-soft); border: 1px solid rgba(62, 232, 154, .35); color: #c8f7e0; border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; }
+  .form-error { color: var(--red); font-weight: 700; margin: 0; }
+  .toast {
+    position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 20;
+    background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-left: 4px solid var(--green);
+    padding: 12px 20px; border-radius: 10px; font-weight: 700; box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
   }
-  .module-num.done { background: var(--ok); color: #fff; }
-  .module-num.current { background: var(--accent); color: #fff; }
-  .module-num.empty, .module-num.partial { background: #eeede8; color: var(--muted); }
-  .module-item.is-current { border: 2px solid var(--accent); box-shadow: 0 4px 14px rgba(109,40,217,.12); }
-  .journey {
-    list-style: none; margin: 0 0 24px; padding: 0;
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
-  }
-  .journey li {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 10px; border-radius: 9px; background: #eceae4;
-    color: var(--muted); font-size: 13px; font-weight: 600; line-height: 1.25;
-  }
-  .journey .j-num {
-    flex: none; width: 22px; height: 22px; border-radius: 50%;
-    display: grid; place-items: center; background: #fff; font-size: 12px;
-  }
-  .journey li.done { background: var(--ok-soft); color: var(--ok); }
-  .journey li.active { background: var(--accent); color: #fff; }
-  .journey li.active .j-num { color: var(--accent); }
-  .success {
-    background: var(--ok-soft); border: 1px solid #b7dfc3; color: #14532d;
-    border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px;
-  }
-  .notice {
-    background: var(--accent-soft); color: #4c1d95; border-radius: var(--radius);
-    padding: 12px 16px; margin-bottom: 16px;
-  }
-  .just-saved {
-    border-left: 4px solid var(--ok); padding-left: 16px; margin-left: -20px;
-    animation: flash 1.6s ease-out;
-  }
-  @keyframes flash { from { background: #d9f2e0; } to { background: transparent; } }
-  .form-error { color: #b91c1c; font-weight: 600; margin: 0; }
-  .steps { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-  .step {
-    font-size: 14px; font-weight: 600; text-decoration: none; color: var(--muted);
-    padding: 6px 12px; border-radius: 99px; background: #eceae4; border: 2px solid transparent;
-  }
-  .step.done { background: var(--ok-soft); color: var(--ok); }
-  .step.active { border-color: var(--accent); color: var(--accent); background: var(--surface); }
+
+  /* ---------- Поля ---------- */
   label.field { display: block; }
-  label.field .q { display: block; font-weight: 600; margin-bottom: 6px; }
+  label.field .q { display: flex; align-items: baseline; gap: 10px; font-weight: 700; margin-bottom: 8px; }
+  .q-num {
+    flex: none; width: 26px; height: 26px; border-radius: 50%; display: inline-grid; place-items: center;
+    background: var(--violet-soft); color: #c4a5ff; font-size: 14px;
+  }
   input[type=text], textarea {
     width: 100%; font: inherit; color: var(--ink);
-    padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; background: #fcfbf9;
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: #151a26;
+    transition: border-color .15s, box-shadow .15s;
   }
-  textarea { min-height: 96px; resize: vertical; }
-  textarea[readonly] { background: #f3f2ee; }
-  .toast {
-    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
-    background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 9px;
-    font-weight: 600; box-shadow: 0 6px 20px rgba(0,0,0,.2); z-index: 10;
+  input[type=text]::placeholder, textarea::placeholder { color: #6f788b; }
+  input[type=text]:focus, textarea:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139, 60, 247, .25); }
+  textarea { min-height: 104px; resize: vertical; }
+  textarea[readonly] { background: #1a1f2c; }
+
+  /* ---------- Полоса сценария и шаги модулей ---------- */
+  .journey { list-style: none; margin: 0 0 26px; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .journey li {
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--line);
+    color: var(--muted); font-size: 15px; font-weight: 700; line-height: 1.25;
   }
-  /* Куратор */
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-  .stat { padding: 16px; }
-  .stat-num { font-size: 28px; font-weight: 700; line-height: 1.1; }
-  .table-wrap { padding: 0; overflow-x: auto; }
-  table.teams { width: 100%; border-collapse: collapse; font-size: 15px; }
-  .teams th {
-    text-align: left; font-size: 13px; color: var(--muted); font-weight: 600;
-    padding: 12px 14px; border-bottom: 1px solid var(--line); white-space: nowrap;
+  .journey .j-num { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); font-size: 14px; }
+  .journey li.done { color: var(--green); border-color: rgba(62, 232, 154, .3); }
+  .journey li.done .j-num { background: var(--green-soft); }
+  .journey li.active { background: var(--brand); color: #0d1020; border-color: transparent; box-shadow: 0 6px 20px rgba(139, 60, 247, .3); }
+  .journey li.active .j-num { background: rgba(255, 255, 255, .75); }
+  .steps { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .step {
+    font-size: 15px; font-weight: 700; text-decoration: none; color: var(--muted);
+    padding: 7px 14px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line);
   }
-  .teams td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
-  .teams tr:last-child td { border-bottom: 0; }
-  .dots { display: flex; gap: 5px; }
-  .dot { width: 14px; height: 14px; border-radius: 50%; background: #e3e1da; }
-  .dot.done { background: var(--ok); }
-  .dot.partial { background: #f59e0b; }
-  .comments { margin-top: 14px; background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; }
-  .comments-title { font-weight: 700; font-size: 14px; color: var(--accent); }
-  .comment { background: #fff; border-radius: 8px; padding: 8px 12px; margin-top: 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .comment-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .step:hover { color: var(--ink); }
+  .step.done { color: var(--green); border-color: rgba(62, 232, 154, .3); }
+  .step.active { color: #fff; border-color: var(--violet); background: var(--violet-soft); }
+
+  /* ---------- Старт ---------- */
+  .hero { text-align: center; padding: 28px 0 8px; }
+  .hero-title { font-size: clamp(38px, 6vw, 64px); line-height: 1.05; margin: 8px 0 16px; letter-spacing: -.02em; }
+  .hero-sub { max-width: 680px; margin: 0 auto 34px; color: var(--muted); font-size: 19px; }
+  .how { list-style: none; padding: 0; margin: 0 auto 30px; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .how li { display: flex; flex-direction: column; gap: 6px; }
+  .how-num { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-weight: 800; background: var(--brand); color: #0d1020; margin-bottom: 4px; }
+  .how li span:last-child { color: var(--muted); font-size: 15px; }
+  .roles { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .role-card {
+    font: inherit; color: inherit; text-align: left; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 26px;
+    display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden;
+    transition: transform .15s, border-color .15s, box-shadow .15s;
+  }
+  .role-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--brand); }
+  .role-card:hover { transform: translateY(-3px); border-color: var(--violet); box-shadow: 0 16px 40px rgba(139, 60, 247, .22); }
+  .role-icon { font-size: 34px; line-height: 1; }
+  .role-card p { margin: 0; color: var(--muted); }
+  .role-cta { margin-top: 10px; font-weight: 800; color: var(--green); }
+  .foot-note { text-align: center; color: var(--muted); font-size: 15px; margin-top: 28px; }
+
+  /* ---------- Выбор проекта ---------- */
+  .pick { width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; transition: border-color .15s, transform .15s; }
+  .pick:hover { border-color: var(--violet); transform: translateY(-2px); }
+  .create-card { border: 1px dashed rgba(139, 60, 247, .6); background: linear-gradient(135deg, rgba(139, 60, 247, .14), rgba(62, 232, 154, .06)); }
+
+  /* ---------- Проект ---------- */
+  .page-head { margin-bottom: 22px; align-items: flex-end; }
+  .project-grid { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 22px; align-items: start; }
+  .progress-card { text-align: center; position: sticky; top: 20px; }
+  .ring { position: relative; width: 150px; height: 150px; margin: 4px auto 12px; }
+  .ring svg { width: 150px; height: 150px; display: block; }
+  .ring .ring-value { transition: stroke-dashoffset .6s ease; }
+  .ring-label { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+  .ring-label strong { font-size: 32px; line-height: 1; }
+  .ring-label span { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .pc-caption { font-weight: 700; margin-bottom: 8px; }
+  .remaining { color: var(--muted); margin: 0 0 16px; font-size: 15px; }
+  .remaining strong { color: var(--ink); }
+  .pc-actions { display: grid; gap: 8px; margin-top: 10px; }
+  .track { list-style: none; margin: 0; padding: 0; position: relative; }
+  .track::before { content: ""; position: absolute; left: 41px; top: 34px; bottom: 34px; width: 2px; background: var(--line); }
+  .track li + li { margin-top: 12px; }
+  .module-item { display: flex; align-items: center; gap: 16px; text-decoration: none; position: relative; transition: border-color .15s, transform .15s; }
+  .module-item:hover { border-color: #4a5470; transform: translateX(3px); }
+  .module-item.is-current { border-color: var(--violet); box-shadow: 0 0 0 1px var(--violet), 0 12px 34px rgba(139, 60, 247, .25); }
+  .node {
+    flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+    font-weight: 800; background: var(--surface-2); color: var(--muted); border: 2px solid var(--line); position: relative; z-index: 1;
+  }
+  .node.done { background: var(--green); color: #0d1020; border-color: var(--green); }
+  .node.current { background: var(--violet); color: #fff; border-color: #b89cff; box-shadow: 0 0 0 6px rgba(139, 60, 247, .22); }
+  .node.partial { border-color: var(--amber); color: var(--amber); }
+  .mi-body { flex: 1; min-width: 0; }
+  .mi-title { font-weight: 800; font-size: 18px; }
+  .mi-desc { color: var(--muted); font-size: 15px; }
+  .mi-badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+  /* ---------- Модуль: форма + живое превью ---------- */
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+  .form-card { padding: 26px 26px 0; }
+  .form-head h1 { font-size: 32px; }
+  .filled { display: flex; align-items: center; gap: 12px; margin: -8px 0 22px; }
+  .filled .progress { flex: 1; }
+  .filled span { font-size: 14px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+  .fields > * + * { margin-top: 20px; }
+  .form-actions {
+    position: sticky; bottom: 0; z-index: 2; margin: 22px -26px 0; padding: 16px 26px;
+    background: rgba(30, 36, 51, .96); border-top: 1px solid var(--line); border-radius: 0 0 var(--radius) var(--radius);
+  }
+  .form-actions .form-error { margin-top: 10px; }
+  .preview {
+    position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow: auto;
+    background: rgba(12, 15, 23, .55); border: 1px solid var(--line); border-radius: 18px; padding: 16px;
+  }
+  .preview-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+  .preview-title { font-weight: 800; }
+  .preview-hint { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+
+  /* ---------- One-pager (светлый лист) ---------- */
+  .sheet {
+    --s-ink: #1b1d22; --s-muted: #6b6f78; --s-line: #e7e4dc;
+    background: #fff; color: var(--s-ink); border-radius: 16px; padding: 44px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+  }
+  .sheet .missing { color: var(--s-muted); }
+  .op-head { border-bottom: 2px solid var(--s-ink); padding-bottom: 22px; margin-bottom: 18px; }
+  .op-label { text-transform: uppercase; letter-spacing: .1em; font-size: 13px; font-weight: 800; color: #6d28d9; }
+  .op-title { font-size: 40px; font-weight: 800; line-height: 1.1; margin: 6px 0 10px; letter-spacing: -.01em; overflow-wrap: anywhere; }
+  .op-desc { font-size: 19px; margin: 0 0 12px; overflow-wrap: anywhere; }
+  .op-team { color: var(--s-muted); margin: 0 0 16px; overflow-wrap: anywhere; }
+  .op-ready { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 700; color: var(--s-muted); }
+  .op-ready-bar { flex: 1; max-width: 240px; height: 6px; border-radius: 99px; background: #eeebe4; overflow: hidden; }
+  .op-ready-bar > div { height: 100%; background: var(--brand); }
+  .op-section { padding: 16px 18px; margin: 0 -18px; border-radius: 12px; border-left: 4px solid transparent; }
+  .op-section + .op-section { margin-top: 6px; }
+  .op-sec-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .op-num { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: #f1ecfe; color: #6d28d9; font-weight: 800; font-size: 14px; }
+  .sheet dl { margin: 12px 0 0; }
+  .sheet dt { font-weight: 700; color: var(--s-muted); font-size: 14px; }
+  .sheet dd { margin: 2px 0 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .sheet .badge.done { background: #e6f4ea; color: #15803d; }
+  .sheet .badge.partial { background: #fdf1e1; color: #b45309; }
+  .sheet .badge.current { background: #efe8fd; color: #6d28d9; }
+  .empty-section {
+    border: 2px dashed #d6d2c8; border-radius: 12px; padding: 18px; margin-top: 12px;
+    color: var(--s-muted); background: #faf9f6;
+  }
+  .empty-section a { color: #6d28d9; font-weight: 700; }
+  .just-saved { border-left-color: #15803d; animation: flash 1.8s ease-out; }
+  @keyframes flash { from { background: #d9f2e0; } to { background: transparent; } }
+  .is-drafting { background: #f6f1ff; border-left-color: #8b3cf7; }
+  .sheet.is-preview { padding: 24px; border-radius: 12px; font-size: 15px; }
+  .sheet.is-preview .op-title { font-size: 26px; }
+  .sheet.is-preview .op-desc { font-size: 16px; }
+  .sheet.is-preview h3 { font-size: 16px; }
+  .sheet.is-preview dd { margin-bottom: 8px; }
+
+  /* ---------- Комментарии ---------- */
+  .comments { margin-top: 16px; background: var(--violet-soft); border: 1px solid rgba(139, 60, 247, .35); border-radius: 12px; padding: 14px 16px; }
+  .comments-title { font-weight: 800; font-size: 15px; color: #c4a5ff; }
+  .comment { background: var(--surface-2); border-radius: 10px; padding: 9px 13px; margin-top: 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .comment-meta { font-size: 13px; color: var(--muted); margin-top: 2px; }
   .comment-form { margin-top: 10px; flex-wrap: nowrap; }
   .comment-form input { flex: 1; width: auto; min-width: 0; }
-  /* One-pager */
-  .onepager { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 40px; }
-  .onepager .op-head { border-bottom: 2px solid var(--ink); padding-bottom: 20px; margin-bottom: 28px; }
-  .onepager .op-label { text-transform: uppercase; letter-spacing: .08em; font-size: 12px; color: var(--accent); font-weight: 700; }
-  .onepager .op-title { font-size: 36px; margin: 4px 0 8px; line-height: 1.15; }
-  .onepager .op-desc { font-size: 18px; margin: 0 0 12px; }
-  .onepager .op-team { color: var(--muted); margin: 0; }
-  .onepager section + section { margin-top: 28px; }
-  .onepager dl { margin: 12px 0 0; }
-  .onepager dt { font-weight: 600; color: var(--muted); font-size: 14px; }
-  .onepager dd { margin: 2px 0 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .empty-section {
-    border: 2px dashed var(--line); border-radius: var(--radius);
-    padding: 20px; color: var(--muted); background: #faf9f6; margin-top: 12px;
+  .sheet .comments { background: #f5f0ff; border-color: #e1d5fb; }
+  .sheet .comments-title { color: #6d28d9; }
+  .sheet .comment { background: #fff; color: var(--s-ink); }
+  .sheet .comment-meta { color: var(--s-muted); }
+  .sheet input[type=text] { background: #fff; color: var(--s-ink); border-color: #d9d0f3; }
+
+  /* ---------- Куратор ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+  .stat { padding: 18px 20px; }
+  .stat-num { font-size: 36px; font-weight: 800; line-height: 1.1; background: var(--brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .stat .sub { margin: 0; font-size: 15px; }
+  .table-wrap { padding: 0; overflow-x: auto; }
+  table.teams { width: 100%; border-collapse: collapse; }
+  .teams th { text-align: left; font-size: 14px; color: var(--muted); font-weight: 700; padding: 14px 16px; background: var(--surface-2); white-space: nowrap; }
+  .teams td { padding: 14px 16px; border-top: 1px solid var(--line); vertical-align: middle; }
+  .teams tbody tr { cursor: pointer; transition: background .15s; }
+  .teams tbody tr:hover { background: rgba(139, 60, 247, .08); }
+  .dots { display: flex; gap: 6px; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; background: #3a4256; }
+  .dot.done { background: var(--green); }
+  .dot.partial { background: var(--amber); }
+
+  /* ---------- Адаптив, движение, печать ---------- */
+  @media (max-width: 1000px) {
+    .split { grid-template-columns: 1fr; }
+    .preview { position: static; max-height: none; }
   }
-  .missing { color: var(--muted); font-style: italic; }
+  @media (max-width: 900px) {
+    .project-grid, .roles, .how { grid-template-columns: 1fr; }
+    .progress-card { position: static; }
+  }
   @media (max-width: 700px) {
+    main { padding: 22px 16px 60px; }
+    header.top { padding: 10px 16px; }
+    h1, .form-head h1 { font-size: 26px; }
     .journey, .stats { grid-template-columns: repeat(2, 1fr); }
-    .onepager { padding: 22px; }
-    .onepager .op-title { font-size: 28px; }
-    h1 { font-size: 24px; }
-    .just-saved { margin-left: -12px; padding-left: 8px; }
+    .sheet { padding: 24px; }
+    .op-title { font-size: 28px; }
+    .module-item { flex-wrap: wrap; }
+    .track::before { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
   }
   @media print {
-    header.top, .no-print { display: none !important; }
     body { background: #fff; }
+    header.top, .no-print { display: none !important; }
     main { padding: 0; max-width: none; }
-    .onepager { border: none; padding: 0; }
+    #app > * { animation: none; }
+    .sheet { box-shadow: none; border-radius: 0; padding: 0; }
   }
 </style>
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="#/">Launch Lab <span>21</span></a>
+  <a class="brand" href="#/start">Launch Lab <span class="grad">21</span></a>
   <nav class="crumbs" id="crumbs"></nav>
   <div class="spacer"></div>
   <div class="role-switch" role="group" aria-label="Роль">
@@ -331,9 +466,9 @@ function saveState(s) {
   catch (e) { alert('Не удалось сохранить данные в localStorage'); }
 }
 
-// Сессия без авторизации: выбранная роль и «свой» проект участника
+// Сессия без авторизации: роль, «свой» проект участника и пройденный стартовый экран
 function loadSession() {
-  const def = { role: 'participant', myProjectId: null };
+  const def = { role: 'participant', myProjectId: null, onboarded: false };
   try { return Object.assign(def, JSON.parse(localStorage.getItem(SESSION_KEY) || '{}')); }
   catch (e) { return def; }
 }
@@ -393,14 +528,33 @@ function fmtDate(ts) {
 function toast(msg) {
   const el = document.createElement('div');
   el.className = 'toast';
+  el.setAttribute('role', 'status');
   el.textContent = msg;
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 1800);
+  setTimeout(() => el.remove(), 1900);
 }
 
 function progressBar(pr) {
   return `<div class="progress" role="progressbar" aria-valuenow="${pr.pct}" aria-valuemin="0" aria-valuemax="100">
     <div style="width:${pr.pct}%"></div></div>`;
+}
+
+// Кольцевой индикатор прогресса (SVG)
+function progressRing(pr) {
+  const r = 52;
+  const c = 2 * Math.PI * r;
+  return `<div class="ring" role="img" aria-label="Прогресс: ${pr.done} из ${pr.total} модулей">
+    <svg viewBox="0 0 120 120" aria-hidden="true">
+      <defs><linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8b3cf7"/><stop offset="1" stop-color="#3ee89a"/>
+      </linearGradient></defs>
+      <circle cx="60" cy="60" r="${r}" fill="none" stroke="#2f3749" stroke-width="10"/>
+      <circle class="ring-value" cx="60" cy="60" r="${r}" fill="none" stroke="url(#ring-grad)" stroke-width="10"
+        stroke-linecap="round" transform="rotate(-90 60 60)" ${pr.pct ? '' : 'opacity="0"'}
+        stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${(c * (1 - pr.pct / 100)).toFixed(2)}"/>
+    </svg>
+    <div class="ring-label"><strong>${pr.pct}%</strong><span>${pr.done} из ${pr.total}</span></div>
+  </div>`;
 }
 
 // Полоса обязательного сценария: Проект → Модуль → Сохранение → One-pager (только для участника)
@@ -460,40 +614,129 @@ function bindCommentForms(project, rerender) {
 }
 
 /* =========================================================
+   One-pager: общий рендер для страницы и живого превью
+   draft подменяет ответы модуля draftModuleId только при отрисовке
+   ========================================================= */
+function renderSheet(project, { draftModuleId = null, draft = null, savedId = null, preview = false } = {}) {
+  const view = { answers: {} };
+  MODULES.forEach(m => {
+    view.answers[m.id] = m.id === draftModuleId && draft ? draft : (project.answers[m.id] || {});
+  });
+  const pr = projectProgress(view);
+
+  const sections = MODULES.map((m, i) => {
+    const st = moduleStatus(view, m);
+    const a = view.answers[m.id];
+    const drafting = preview && m.id === draftModuleId;
+    const cls = ['op-section', savedId === m.id ? 'just-saved' : '', drafting ? 'is-drafting' : ''].join(' ').trim();
+    const badges = [
+      savedId === m.id ? '<span class="badge done no-print">Только что сохранено</span>' : '',
+      drafting ? '<span class="badge current">✎ Сейчас заполняется</span>' : '',
+      st === 'partial' ? '<span class="badge partial">Заполнен частично</span>' : '',
+    ].join('');
+    const body = st === 'empty'
+      ? `<div class="empty-section"><strong>Пустой раздел.</strong> Модуль «${esc(m.title)}» ещё не заполнен.
+          ${!preview && !isCurator() ? `<span class="no-print"><br><a href="#/p/${project.id}/m/${m.id}">Заполнить модуль →</a></span>` : ''}</div>`
+      : `<dl>${m.fields.map(f => `
+          <dt>${esc(f.label)}</dt>
+          <dd>${(a[f.id] || '').trim() ? esc(a[f.id].trim()) : '<span class="missing">Нет ответа</span>'}</dd>`).join('')}
+        </dl>`;
+    return `<section ${preview ? '' : `id="section-${m.id}"`} class="${cls}">
+      <div class="op-sec-head"><span class="op-num">${i + 1}</span><h3>${esc(m.title)}</h3>${badges}</div>
+      ${body}
+      ${preview ? '' : commentsBlock(project, m)}
+    </section>`;
+  }).join('');
+
+  return `<article class="onepager sheet ${preview ? 'is-preview' : ''}">
+    <header class="op-head">
+      <div class="op-label">One-pager · Launch Lab 21</div>
+      <div class="op-title">${project.name ? esc(project.name) : '<span class="missing">Название не указано</span>'}</div>
+      <p class="op-desc">${project.description ? esc(project.description) : '<span class="missing">Описание не заполнено</span>'}</p>
+      <p class="op-team"><strong>Команда:</strong> ${project.team ? esc(project.team) : '<span class="missing">не указана</span>'}</p>
+      <div class="op-ready"><div class="op-ready-bar"><div style="width:${pr.pct}%"></div></div>Готовность ${pr.done} из ${pr.total}</div>
+    </header>
+    ${sections}
+  </article>`;
+}
+
+/* =========================================================
    Экраны
    ========================================================= */
 const app = document.getElementById('app');
 
-// 0. Участник: создать или открыть проект своей команды
-function viewChooseProject() {
+// Старт: идея продукта и выбор роли
+function viewStart() {
   setCrumbs([]);
   app.innerHTML = `
+    <section class="hero">
+      <span class="eyebrow">School 21 · Launch Lab 21</span>
+      <h1 class="hero-title">От сырой идеи<br>до <span class="grad">one-pager</span></h1>
+      <p class="hero-sub">Команда проходит программу инкубатора по модулям и отвечает на задания, а страница проекта для инвестора собирается из ответов сама.</p>
+    </section>
+    <ol class="how">
+      <li class="card"><span class="how-num">1</span><strong>Модули</strong><span>Программа по шагам: проблема, решение, рынок.</span></li>
+      <li class="card"><span class="how-num">2</span><strong>Ответы</strong><span>В каждом модуле шаблон с подсказками. Всё сохраняется в браузере.</span></li>
+      <li class="card"><span class="how-num">3</span><strong>One-pager</strong><span>Документ о проекте собирается автоматически, пока вы печатаете.</span></li>
+    </ol>
+    <div class="roles">
+      <button type="button" class="role-card" id="start-participant">
+        <span class="role-icon" aria-hidden="true">🚀</span>
+        <h2>Я из команды</h2>
+        <p>Создайте проект, пройдите модули и получите готовый one-pager.</p>
+        <span class="role-cta">Начать →</span>
+      </button>
+      <button type="button" class="role-card" id="start-curator">
+        <span class="role-icon" aria-hidden="true">🧭</span>
+        <h2>Я куратор</h2>
+        <p>Смотрите прогресс всех команд, читайте ответы и оставляйте комментарии.</p>
+        <span class="role-cta">Открыть панель →</span>
+      </button>
+    </div>
+    <p class="foot-note">Работает без интернета · данные хранятся в вашем браузере</p>`;
+
+  const pick = role => {
+    session.role = role;
+    session.onboarded = true;
+    saveSession();
+    go(role === 'curator' ? '#/curator' : '#/');
+  };
+  document.getElementById('start-participant').onclick = () => pick('participant');
+  document.getElementById('start-curator').onclick = () => pick('curator');
+}
+
+// Участник: создать или открыть проект своей команды
+function viewChooseProject() {
+  setCrumbs([{ label: 'Выбор проекта' }]);
+  app.innerHTML = `
     ${journey(1)}
-    <h1>Добро пожаловать в Launch Lab 21</h1>
-    <p class="sub">Создайте проект своей команды или откройте существующий. Участник видит только свой проект.</p>
-    <div class="card" style="margin-bottom:24px">
+    <span class="eyebrow">Кабинет команды</span>
+    <h1>Создайте или откройте проект</h1>
+    <p class="sub">Участник видит только проект своей команды.</p>
+    <div class="card create-card" style="margin-bottom:26px">
       <div class="row">
         <div style="flex:1;min-width:220px">
-          <h2>Новая команда</h2>
-          <p class="sub" style="margin:0">Заполните профиль проекта и начните с модуля 1.</p>
+          <h2>🚀 Новая команда</h2>
+          <p class="sub" style="margin:0">Заполните профиль проекта и сразу переходите к модулю 1.</p>
         </div>
         <button class="btn primary" id="new-project">+ Создать проект</button>
       </div>
     </div>
-    <h2 style="margin-bottom:12px">Открыть проект своей команды</h2>
+    <h2 style="margin-bottom:12px">Проект уже есть</h2>
     <div class="stack">
       ${state.projects.map(p => `
-        <button type="button" class="card project-card pick" data-id="${p.id}">
+        <button type="button" class="card pick" data-id="${p.id}">
           <div class="row">
-            <h2>${esc(p.name || 'Без названия')}</h2>
-            <div class="spacer"></div>
+            <div style="flex:1;min-width:200px">
+              <h2>${esc(p.name || 'Без названия')}</h2>
+              <p class="sub" style="margin:0">${p.team ? esc(p.team) : '<span class="missing">Состав команды не указан</span>'}</p>
+            </div>
             <span class="btn small">Открыть →</span>
           </div>
-          <p class="sub" style="margin:4px 0 0">${p.team ? esc(p.team) : '<span class="missing">Состав команды не указан</span>'}</p>
         </button>`).join('')}
     </div>
     <p class="no-print" style="margin-top:32px">
-      <button class="btn ghost danger" id="reset">Сбросить демо-данные</button>
+      <button class="btn ghost danger small" id="reset">Сбросить демо-данные</button>
     </p>`;
 
   document.getElementById('new-project').onclick = () => {
@@ -534,16 +777,18 @@ function viewCurator() {
   const comments = projects.reduce((s, p) => s + commentCount(p), 0);
 
   app.innerHTML = `
-    <div class="row" style="margin-bottom:6px">
-      <h1>Режим куратора</h1>
-      <span class="badge current">Куратор</span>
+    <div class="page-head row">
+      <div>
+        <span class="eyebrow">🧭 Панель куратора</span>
+        <h1>Все команды инкубатора</h1>
+        <p class="sub" style="margin:0">Откройте команду, чтобы прочитать ответы и оставить комментарий к модулю.</p>
+      </div>
     </div>
-    <p class="sub">Все команды инкубатора и их прогресс. Откройте one-pager команды, чтобы прочитать ответы и оставить комментарий к модулю.</p>
     <div class="stats">
-      <div class="card stat"><div class="stat-num">${projects.length}</div><div class="sub" style="margin:0">команд</div></div>
-      <div class="card stat"><div class="stat-num">${avg}%</div><div class="sub" style="margin:0">средний прогресс</div></div>
-      <div class="card stat"><div class="stat-num">${finished}</div><div class="sub" style="margin:0">прошли программу</div></div>
-      <div class="card stat"><div class="stat-num">${comments}</div><div class="sub" style="margin:0">комментариев</div></div>
+      <div class="card stat"><div class="stat-num">${projects.length}</div><div class="sub">команд</div></div>
+      <div class="card stat"><div class="stat-num">${avg}%</div><div class="sub">средний прогресс</div></div>
+      <div class="card stat"><div class="stat-num">${finished}</div><div class="sub">прошли программу</div></div>
+      <div class="card stat"><div class="stat-num">${comments}</div><div class="sub">комментариев</div></div>
     </div>
     <div class="card table-wrap">
       <table class="teams">
@@ -557,14 +802,14 @@ function viewCurator() {
             const cc = commentCount(p);
             return `<tr data-id="${p.id}">
               <td><strong>${esc(p.name || 'Без названия')}</strong>
-                <div class="sub" style="margin:0;font-size:13px">${p.team ? esc(p.team) : '<span class="missing">состав не указан</span>'}</div></td>
-              <td style="min-width:130px">${progressBar(pr)}<div style="font-size:13px;margin-top:4px">${pr.done} из ${pr.total} · ${pr.pct}%</div></td>
+                <div class="sub" style="margin:0;font-size:14px">${p.team ? esc(p.team) : '<span class="missing">состав не указан</span>'}</div></td>
+              <td style="min-width:140px">${progressBar(pr)}<div style="font-size:14px;margin-top:5px">${pr.done} из ${pr.total} · ${pr.pct}%</div></td>
               <td><div class="dots">${MODULES.map(m => {
                 const st = moduleStatus(p, m);
                 return `<span class="dot ${st}" title="${esc(m.title)}: ${STATUS_LABEL[st]}"></span>`;
               }).join('')}</div></td>
               <td>${cur ? esc(cur.title) : '<span class="badge done">Программа пройдена</span>'}</td>
-              <td style="font-size:13px;white-space:nowrap">${fmtDate(p.updatedAt)}</td>
+              <td style="font-size:14px;white-space:nowrap;color:var(--muted)">${fmtDate(p.updatedAt)}</td>
               <td style="white-space:nowrap">
                 <a class="btn primary small" href="#/p/${p.id}/onepager">Ответы и one-pager</a>
                 ${cc ? `<span class="badge current" title="Комментариев">💬 ${cc}</span>` : ''}
@@ -574,20 +819,26 @@ function viewCurator() {
         </tbody>
       </table>
     </div>`;
+
+  app.querySelectorAll('table.teams tbody tr').forEach(tr => {
+    tr.onclick = e => {
+      if (!e.target.closest('a')) location.hash = `#/p/${tr.dataset.id}/onepager`;
+    };
+  });
 }
 
 // Нет доступа: участник пытается открыть чужой проект
 function viewNoAccess() {
   setCrumbs([homeCrumb()]);
   const mine = getProject(session.myProjectId);
-  app.innerHTML = `<div class="card">
-    <h2>Нет доступа к этому проекту</h2>
+  app.innerHTML = `<div class="card" style="max-width:620px">
+    <h2>🔒 Нет доступа к этому проекту</h2>
     <p class="sub">Участник видит только проект своей команды. Чтобы посмотреть все команды, переключите роль на «Куратор».</p>
     ${mine ? `<a class="btn primary" href="#/p/${mine.id}">К моему проекту</a>` : '<a class="btn primary" href="#/">Выбрать свой проект</a>'}
   </div>`;
 }
 
-// 1. Список модулей проекта (с прогрессом)
+// 1. Страница проекта: кольцо прогресса и дорожка модулей
 function viewProject(project) {
   const pr = projectProgress(project);
   const nextModule = currentModule(project);
@@ -596,50 +847,57 @@ function viewProject(project) {
 
   app.innerHTML = `
     ${journey(2)}
-    <div class="row" style="margin-bottom:8px">
-      <h1>${esc(project.name || 'Без названия')}</h1>
+    <div class="page-head row">
+      <div style="min-width:0">
+        <span class="eyebrow">${isCurator() ? 'Просмотр команды' : 'Проект команды'}</span>
+        <h1>${esc(project.name || 'Без названия')}</h1>
+        <p class="sub" style="margin:0">${project.team ? 'Команда: ' + esc(project.team) : '<span class="missing">Состав команды не указан</span>'}</p>
+      </div>
       <div class="spacer"></div>
       ${isCurator()
-        ? `<a class="btn" href="#/curator">← Все команды</a>`
+        ? '<a class="btn" href="#/curator">← Все команды</a>'
         : `<button class="btn ghost" id="switch-team">Сменить команду</button>
            <a class="btn" href="#/p/${project.id}/profile">Профиль</a>`}
-      <a class="btn primary" href="#/p/${project.id}/onepager">Открыть one-pager →</a>
-    </div>
-    <p class="sub">${project.team ? 'Команда: ' + esc(project.team) : '<span class="missing">Состав команды не указан</span>'}</p>
-
-    <div class="card" style="margin-bottom:24px">
-      <div class="row" style="margin-bottom:10px">
-        <strong>Прогресс программы</strong>
-        <div class="spacer"></div>
-        <span>${pr.done} из ${pr.total} модулей · ${pr.pct}%</span>
-      </div>
-      ${progressBar(pr)}
-      <p class="sub" style="margin:10px 0 0" id="remaining">
-        ${nextModule
-          ? `Текущий модуль: <strong>${esc(nextModule.title)}</strong><br>
-             Осталось заполнить (${remaining.length}): ${remaining.map(m => esc(m.title)).join(', ')}`
-          : 'Все модули заполнены — one-pager готов 🎉'}
-      </p>
-      ${nextModule && !isCurator() ? `<a class="btn primary" style="margin-top:14px" href="#/p/${project.id}/m/${nextModule.id}">Продолжить: ${esc(nextModule.title)} →</a>` : ''}
     </div>
 
-    <h2 style="margin-bottom:12px">Модули программы</h2>
-    <div class="stack">
-      ${MODULES.map((m, i) => {
-        const st = moduleStatus(project, m);
-        const view = st === 'done' ? 'done' : m === nextModule ? 'current' : st;
-        const hint = view === 'current' && st === 'partial' ? ' · начат' : '';
-        const cc = commentsFor(project, m.id).length;
-        return `<a class="card module-item ${view === 'current' ? 'is-current' : ''}" href="#/p/${project.id}/m/${m.id}" data-status="${view}">
-          <div class="module-num ${view}">${st === 'done' ? '✓' : i + 1}</div>
-          <div style="flex:1">
-            <div style="font-weight:600">${esc(m.title)}</div>
-            <div class="sub" style="margin:0;font-size:14px">${esc(m.description)}</div>
-          </div>
-          ${cc ? `<span class="badge current" title="Комментарии куратора">💬 ${cc}</span>` : ''}
-          <span class="badge ${view}">${STATUS_LABEL[view]}${hint}</span>
-        </a>`;
-      }).join('')}
+    <div class="project-grid">
+      <aside class="card progress-card">
+        ${progressRing(pr)}
+        <div class="pc-caption">${pr.done} из ${pr.total} модулей пройдено</div>
+        <p class="remaining" id="remaining">
+          ${nextModule
+            ? `Текущий модуль: <strong>${esc(nextModule.title)}</strong><br>
+               Осталось заполнить (${remaining.length}): ${remaining.map(m => esc(m.title)).join(', ')}`
+            : 'Все модули заполнены — one-pager готов 🎉'}
+        </p>
+        <div class="pc-actions">
+          ${nextModule && !isCurator() ? `<a class="btn primary block" href="#/p/${project.id}/m/${nextModule.id}">Продолжить: ${esc(nextModule.title)} →</a>` : ''}
+          <a class="btn block ${nextModule && !isCurator() ? '' : 'primary'}" href="#/p/${project.id}/onepager">Открыть one-pager</a>
+        </div>
+      </aside>
+
+      <section>
+        <h2 style="margin-bottom:14px">Модули программы</h2>
+        <ol class="track">
+          ${MODULES.map((m, i) => {
+            const st = moduleStatus(project, m);
+            const view = st === 'done' ? 'done' : m === nextModule ? 'current' : st;
+            const hint = view === 'current' && st === 'partial' ? ' · начат' : '';
+            const cc = commentsFor(project, m.id).length;
+            return `<li><a class="card module-item ${view === 'current' ? 'is-current' : ''}" href="#/p/${project.id}/m/${m.id}" data-status="${view}">
+              <span class="node ${view}">${st === 'done' ? '✓' : i + 1}</span>
+              <div class="mi-body">
+                <div class="mi-title">${esc(m.title)}</div>
+                <div class="mi-desc">${esc(m.description)}</div>
+              </div>
+              <div class="mi-badges">
+                ${cc ? `<span class="badge current" title="Комментарии куратора">💬 ${cc}</span>` : ''}
+                <span class="badge ${view}">${STATUS_LABEL[view]}${hint}</span>
+              </div>
+            </a></li>`;
+          }).join('')}
+        </ol>
+      </section>
     </div>`;
 
   const sw = document.getElementById('switch-team');
@@ -650,16 +908,19 @@ function viewProject(project) {
   };
 }
 
-// 2. Форма модуля (для куратора — только просмотр)
+// 2. Модуль: форма слева, живое превью one-pager справа (для куратора — только просмотр)
 function viewModule(project, module) {
-  const answers = project.answers[module.id] || {};
+  const saved = project.answers[module.id] || {};
   const index = MODULES.indexOf(module);
   const readOnly = isCurator();
+  const total = module.fields.length;
+  const filledOf = data => module.fields.filter(f => (data[f.id] || '').trim()).length;
+  const savedFilled = filledOf(saved);
   setCrumbs(projectCrumbs(project, { label: module.title }));
 
   app.innerHTML = `
     ${journey(2)}
-    ${readOnly ? '<div class="notice">Режим куратора: ответы доступны только для просмотра. Комментарий можно оставить внизу.</div>' : ''}
+    ${readOnly ? '<div class="notice">Режим куратора: ответы доступны только для просмотра. Комментарий можно оставить под формой.</div>' : ''}
     <div class="steps no-print">
       ${MODULES.map((m, i) => {
         const st = moduleStatus(project, m);
@@ -667,44 +928,90 @@ function viewModule(project, module) {
           ${st === 'done' ? '✓' : i + 1}. ${esc(m.title)}</a>`;
       }).join('')}
     </div>
-    <p class="sub" style="margin:0">Модуль ${index + 1} из ${MODULES.length}</p>
-    <h1>${esc(module.title)}</h1>
-    <p class="sub">${esc(module.description)}</p>
-    <form class="card stack" id="module-form">
-      ${module.fields.map(f => `
-        <label class="field">
-          <span class="q">${esc(f.label)}</span>
-          <textarea name="${f.id}" placeholder="${esc(f.placeholder)}" ${readOnly ? 'readonly' : ''}>${esc(answers[f.id] || '')}</textarea>
-        </label>`).join('')}
-      <div class="row">
-        ${readOnly
-          ? `<a class="btn primary" href="#/p/${project.id}/onepager">Открыть one-pager →</a>`
-          : `<button type="submit" class="btn primary" id="save-answer">Сохранить ответ и открыть one-pager →</button>`}
-        <div class="spacer"></div>
-        <a class="btn ghost" href="#/p/${project.id}">${readOnly ? 'К модулям' : 'Отмена'}</a>
+
+    <div class="split">
+      <div>
+        <form class="card form-card" id="module-form">
+          <div class="form-head">
+            <span class="eyebrow">Модуль ${index + 1} из ${MODULES.length}</span>
+            <h1>${esc(module.title)}</h1>
+            <p class="sub">${esc(module.description)}</p>
+          </div>
+          <div class="filled">
+            <div class="progress"><div id="filled-bar" style="width:${Math.round(savedFilled / total * 100)}%"></div></div>
+            <span id="filled-count">Заполнено ${savedFilled} из ${total}</span>
+          </div>
+          <div class="fields">
+            ${module.fields.map((f, i) => `
+              <label class="field">
+                <span class="q"><span class="q-num">${i + 1}</span>${esc(f.label)}</span>
+                <textarea name="${f.id}" placeholder="${esc(f.placeholder)}" ${readOnly ? 'readonly' : ''}>${esc(saved[f.id] || '')}</textarea>
+              </label>`).join('')}
+          </div>
+          <div class="form-actions">
+            <div class="row">
+              ${readOnly
+                ? `<a class="btn primary" href="#/p/${project.id}/onepager">Открыть one-pager →</a>`
+                : '<button type="submit" class="btn primary" id="save-answer">Сохранить ответ и открыть one-pager →</button>'}
+              <div class="spacer"></div>
+              <a class="btn ghost" href="#/p/${project.id}">${readOnly ? 'К модулям' : 'Отмена'}</a>
+            </div>
+            <p class="form-error" id="form-error" hidden>Заполните хотя бы одно поле, чтобы сохранить ответ.</p>
+          </div>
+        </form>
+        ${commentsBlock(project, module)}
       </div>
-      <p class="form-error" id="form-error" hidden>Заполните хотя бы одно поле, чтобы сохранить ответ.</p>
-    </form>
-    ${commentsBlock(project, module)}`;
+
+      <aside class="preview no-print" aria-label="Живое превью one-pager">
+        <div class="preview-head">
+          <span class="preview-title">👁 Живое превью one-pager</span>
+          <div class="spacer"></div>
+          <span id="draft-badge" class="badge ${savedFilled ? 'done' : 'empty'}">${savedFilled ? '✓ Сохранено' : 'Пока пусто'}</span>
+        </div>
+        <p class="preview-hint">${readOnly ? 'Так one-pager команды выглядит сейчас.' : 'Текст появляется здесь сразу, пока вы печатаете. В one-pager он попадёт после сохранения.'}</p>
+        <div id="preview-sheet">${renderSheet(project, { draftModuleId: module.id, draft: saved, preview: true })}</div>
+      </aside>
+    </div>`;
 
   bindCommentForms(project, () => viewModule(project, module));
+
+  const previewBox = app.querySelector('.preview');
+  const sheetBox = document.getElementById('preview-sheet');
+  const focusDraftSection = () => {
+    if (!matchMedia('(min-width: 1001px)').matches) return;
+    const sec = sheetBox.querySelector('.is-drafting');
+    if (sec) previewBox.scrollTop = Math.max(0, sec.offsetTop - 90);
+  };
+  focusDraftSection();
   if (readOnly) return;
 
   const form = document.getElementById('module-form');
   const errorEl = document.getElementById('form-error');
+  const badge = document.getElementById('draft-badge');
+  const readDraft = () => Object.fromEntries(module.fields.map(f => [f.id, form.elements[f.id].value]));
   let dirty = false;
   isDirty = () => dirty;
 
-  // Шаг 2 → 3: как только начали вводить, подсвечиваем «Сохранить ответ»
   form.addEventListener('input', () => {
-    if (!dirty) document.querySelector('.journey').outerHTML = journey(3);
+    if (!dirty) {
+      // Шаг 2 → 3: как только начали вводить, подсвечиваем «Сохранить ответ»
+      document.querySelector('.journey').outerHTML = journey(3);
+      badge.className = 'badge partial';
+      badge.textContent = '✎ Черновик · не сохранено';
+    }
     dirty = true;
     errorEl.hidden = true;
+    const draft = readDraft();
+    const n = filledOf(draft);
+    sheetBox.innerHTML = renderSheet(project, { draftModuleId: module.id, draft, preview: true });
+    document.getElementById('filled-count').textContent = `Заполнено ${n} из ${total}`;
+    document.getElementById('filled-bar').style.width = `${Math.round(n / total * 100)}%`;
+    focusDraftSection();
   });
+
   form.onsubmit = e => {
     e.preventDefault();
-    const data = {};
-    module.fields.forEach(f => { data[f.id] = form.elements[f.id].value; });
+    const data = readDraft();
     if (!Object.values(data).some(v => v.trim())) {
       errorEl.hidden = false;
       return;
@@ -724,22 +1031,25 @@ function viewProfile(project) {
   const isNew = !Object.keys(project.answers).length;
   app.innerHTML = `
     ${journey(1)}
-    <h1>Профиль проекта</h1>
-    <p class="sub">Эти данные попадут в шапку one-pager.</p>
-    <form class="card stack" id="profile-form">
-      ${PROFILE_FIELDS.map(f => `
-        <label class="field">
-          <span class="q">${esc(f.label)}</span>
-          ${f.type === 'textarea'
-            ? `<textarea name="${f.id}" placeholder="${esc(f.placeholder)}">${esc(project[f.id])}</textarea>`
-            : `<input type="text" name="${f.id}" placeholder="${esc(f.placeholder)}" value="${esc(project[f.id])}">`}
-        </label>`).join('')}
-      <div class="row">
-        <button type="submit" class="btn primary">${isNew ? 'Сохранить и перейти к модулю 1 →' : 'Сохранить'}</button>
-        <div class="spacer"></div>
-        <a class="btn ghost" href="#/p/${project.id}">Отмена</a>
-      </div>
-    </form>`;
+    <div style="max-width:720px">
+      <span class="eyebrow">Шаг 1 · Профиль</span>
+      <h1>Профиль проекта</h1>
+      <p class="sub">Эти данные попадут в шапку one-pager.</p>
+      <form class="card stack" id="profile-form">
+        ${PROFILE_FIELDS.map((f, i) => `
+          <label class="field">
+            <span class="q"><span class="q-num">${i + 1}</span>${esc(f.label)}</span>
+            ${f.type === 'textarea'
+              ? `<textarea name="${f.id}" placeholder="${esc(f.placeholder)}">${esc(project[f.id])}</textarea>`
+              : `<input type="text" name="${f.id}" placeholder="${esc(f.placeholder)}" value="${esc(project[f.id])}">`}
+          </label>`).join('')}
+        <div class="row" style="padding-top:8px">
+          <button type="submit" class="btn primary">${isNew ? 'Сохранить и перейти к модулю 1 →' : 'Сохранить'}</button>
+          <div class="spacer"></div>
+          <a class="btn ghost" href="#/p/${project.id}">Отмена</a>
+        </div>
+      </form>
+    </div>`;
 
   const form = document.getElementById('profile-form');
   let dirty = false;
@@ -763,34 +1073,6 @@ function viewOnePager(project, savedId) {
   const nextModule = currentModule(project);
   setCrumbs(projectCrumbs(project, { label: 'One-pager' }));
 
-  const sections = MODULES.map(m => {
-    const st = moduleStatus(project, m);
-    const a = project.answers[m.id] || {};
-    if (st === 'empty') {
-      return `<section id="section-${m.id}">
-        <h2>${esc(m.title)}</h2>
-        <div class="empty-section">
-          <strong>Пустой раздел.</strong> Модуль «${esc(m.title)}» ещё не заполнен.
-          ${isCurator() ? '' : `<span class="no-print"><br><a href="#/p/${project.id}/m/${m.id}">Заполнить модуль →</a></span>`}
-        </div>
-        ${commentsBlock(project, m)}
-      </section>`;
-    }
-    return `<section id="section-${m.id}" class="${saved === m ? 'just-saved' : ''}">
-      <div class="row">
-        <h2>${esc(m.title)}</h2>
-        ${saved === m ? '<span class="badge done no-print">Только что сохранено</span>' : ''}
-        ${st === 'partial' ? '<span class="badge partial">Заполнен частично</span>' : ''}
-      </div>
-      <dl>
-        ${m.fields.map(f => `
-          <dt>${esc(f.label)}</dt>
-          <dd>${(a[f.id] || '').trim() ? esc(a[f.id].trim()) : '<span class="missing">Нет ответа</span>'}</dd>`).join('')}
-      </dl>
-      ${commentsBlock(project, m)}
-    </section>`;
-  }).join('');
-
   app.innerHTML = `
     ${journey(saved ? 5 : 4)}
     ${saved ? `<div class="success no-print" id="saved-banner">
@@ -805,23 +1087,17 @@ function viewOnePager(project, savedId) {
       </div>
     </div>` : ''}
     ${isCurator() ? '<div class="notice no-print">Режим куратора: читайте ответы команды и оставляйте комментарии под каждым модулем. Команда увидит их у себя.</div>' : ''}
-    <div class="row no-print" style="margin-bottom:16px">
+    <div class="row no-print" style="margin-bottom:18px">
       ${isCurator()
         ? '<a class="btn ghost" href="#/curator">← Все команды</a>'
         : `<a class="btn ghost" href="#/p/${project.id}">← К модулям</a>`}
       <div class="spacer"></div>
-      <span class="sub" style="margin:0">Готовность: ${pr.done} из ${pr.total}</span>
-      <button class="btn" onclick="window.print()">Печать / PDF</button>
+      <span class="badge ${pr.done === pr.total ? 'done' : 'current'}">Готовность: ${pr.done} из ${pr.total}</span>
+      <button class="btn" onclick="window.print()">🖨 Печать / PDF</button>
     </div>
-    <article class="onepager">
-      <div class="op-head">
-        <div class="op-label">One-pager · Launch Lab 21</div>
-        <div class="op-title">${project.name ? esc(project.name) : '<span class="missing">Название не указано</span>'}</div>
-        <p class="op-desc">${project.description ? esc(project.description) : '<span class="missing">Описание не заполнено</span>'}</p>
-        <p class="op-team"><strong>Команда:</strong> ${project.team ? esc(project.team) : '<span class="missing">не указана</span>'}</p>
-      </div>
-      ${sections}
-    </article>`;
+    <div style="max-width:900px;margin:0 auto">
+      ${renderSheet(project, { savedId: saved ? saved.id : null })}
+    </div>`;
 
   bindCommentForms(project, () => viewOnePager(project));
 
@@ -833,7 +1109,7 @@ function viewOnePager(project, savedId) {
 
 function viewNotFound() {
   setCrumbs([homeCrumb()]);
-  app.innerHTML = `<div class="card"><h2>Страница не найдена</h2>
+  app.innerHTML = `<div class="card" style="max-width:620px"><h2>Страница не найдена</h2>
     <p class="sub">Проект или модуль не существует.</p><a class="btn primary" href="#/">На главную</a></div>`;
 }
 
@@ -849,8 +1125,11 @@ function render() {
   currentHash = location.hash;
   window.scrollTo(0, 0);
   document.querySelectorAll('.role-switch button').forEach(b => {
-    b.setAttribute('aria-pressed', String(b.dataset.role === session.role));
+    b.setAttribute('aria-pressed', String(session.onboarded && b.dataset.role === session.role));
   });
+
+  if (parts[0] === 'start') return viewStart();
+  if (!session.onboarded && (parts.length === 0 || parts[0] === 'curator')) return go('#/start');
 
   if (isCurator()) {
     if (parts.length === 0 || parts[0] === 'curator') return viewCurator();
@@ -896,10 +1175,11 @@ window.addEventListener('beforeunload', e => {
 
 document.querySelectorAll('.role-switch button').forEach(b => {
   b.onclick = () => {
-    if (b.dataset.role === session.role) return;
+    if (b.dataset.role === session.role && session.onboarded && !location.hash.startsWith('#/start')) return;
     if (isDirty() && !confirm('Есть несохранённые изменения. Уйти без сохранения?')) return;
     isDirty = () => false;
     session.role = b.dataset.role;
+    session.onboarded = true;
     saveSession();
     go(isCurator() ? '#/curator' : '#/');
   };
